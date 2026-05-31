@@ -50,8 +50,17 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font
 .tile{position:absolute;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:900;cursor:pointer;transition:transform .18s ease,opacity .18s;will-change:transform;box-shadow:inset 0 -4px 0 rgba(0,0,0,.25),inset 0 3px 0 rgba(255,255,255,.25)}
 .tile.sel{outline:3px solid #fff;outline-offset:-3px;z-index:5;animation:selp .6s ease-in-out infinite}
 @keyframes selp{0%,100%{transform:var(--tf) scale(1)}50%{transform:var(--tf) scale(.9)}}
-.tile.clear{animation:clr .25s ease forwards;z-index:4}
-@keyframes clr{0%{transform:var(--tf) scale(1)}60%{transform:var(--tf) scale(1.25);opacity:.9}100%{transform:var(--tf) scale(0);opacity:0}}
+.tile.clear{animation:clr .28s ease forwards;z-index:4}
+@keyframes clr{0%{transform:var(--tf) scale(1) rotate(0)}45%{transform:var(--tf) scale(1.32) rotate(12deg);opacity:1}100%{transform:var(--tf) scale(0) rotate(45deg);opacity:0}}
+.tile.born{animation:born .32s cubic-bezier(.2,1.7,.4,1)}
+@keyframes born{0%{transform:var(--tf) scale(.2)}100%{transform:var(--tf) scale(1)}}
+.fx{position:absolute;pointer-events:none;z-index:7}
+.fx.shock{border-radius:50%;border:4px solid #fff;animation:shockfx .42s ease-out forwards}
+@keyframes shockfx{0%{transform:scale(.15);opacity:.95;box-shadow:0 0 30px #fff}100%{transform:scale(2.6);opacity:0}}
+.fx.beam{background:linear-gradient(90deg,transparent,#fff,transparent);box-shadow:0 0 18px #fff;border-radius:4px;animation:beamfx .36s ease-out forwards}
+@keyframes beamfx{0%{opacity:.95}100%{opacity:0}}
+.burst{position:absolute;border-radius:50%;pointer-events:none;z-index:7;animation:burstfx .5s ease-out forwards}
+@keyframes burstfx{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--bx),var(--by)) scale(.2)}}
 .tile.spec{box-shadow:inset 0 0 0 2px #fff,inset 0 -4px 0 rgba(0,0,0,.25)}
 .tile .badge{font-size:1.3rem;filter:drop-shadow(0 1px 1px rgba(0,0,0,.5))}
 .pop{position:absolute;font-weight:900;color:#fff;font-size:1.1rem;pointer-events:none;text-shadow:0 2px 5px rgba(0,0,0,.7);animation:popUp .7s ease-out forwards;z-index:8}
@@ -300,7 +309,8 @@ function specBadge(spec){ return spec==='h'?'↔':spec==='v'?'↕':spec==='bomb'
 function styleTile(t){ const s=SZ-4; t.el.style.width=s+'px'; t.el.style.height=s+'px';
   if(t.spec==='rainbow'){ t.el.style.background='conic-gradient(#ff4d5e,#ffd23f,#38d96a,#4d8bff,#b06bff,#ff4d5e)'; t.el.classList.add('spec'); }
   else { t.el.style.background=COL[t.color]; t.el.classList.toggle('spec',!!t.spec); }
-  const b=specBadge(t.spec); t.el.innerHTML = b?`<span class="badge">${b}</span>`:`<span style="opacity:.85;color:rgba(255,255,255,.9)">${SYM[t.color]}</span>`;
+  const b=specBadge(t.spec); const ss=Math.round(SZ*0.5);
+  t.el.innerHTML = b?`<span class="badge" style="font-size:${Math.round(SZ*0.6)}px">${b}</span>`:`<span style="color:#fff;font-weight:900;font-size:${ss}px;line-height:1;text-shadow:0 2px 3px rgba(0,0,0,.55),0 0 1px rgba(0,0,0,.8)">${SYM[t.color]}</span>`;
 }
 function mkTile(color,spec){ const el=document.createElement('div'); el.className='tile'; const t={color,spec:spec||0,el}; styleTile(t); boardEl.appendChild(el); return t; }
 function posTile(t){ t.el.style.setProperty('--tf',`translate(${t.c*SZ+2}px, ${t.r*SZ+2}px)`); t.el.style.transform=`translate(${t.c*SZ+2}px, ${t.r*SZ+2}px)`; }
@@ -400,11 +410,23 @@ function endTurn(){
 }
 
 /* ============ CASCADE / SPECIALS ============ */
+function burstAt(r,c,color){
+  const x=c*SZ+SZ/2, y=r*SZ+SZ/2;
+  for(let i=0;i<3;i++){ const p=document.createElement('div'); p.className='burst'; const sz=Math.round(SZ*0.22); p.style.width=p.style.height=sz+'px'; p.style.background=color; p.style.left=(x-sz/2)+'px'; p.style.top=(y-sz/2)+'px';
+    const a=Math.random()*6.283, d=SZ*(0.55+Math.random()*0.6); p.style.setProperty('--bx',(Math.cos(a)*d)+'px'); p.style.setProperty('--by',(Math.sin(a)*d)+'px'); boardEl.appendChild(p); setTimeout(()=>p.remove(),500); }
+}
+function fxAt(r,c,spec){
+  const x=c*SZ+SZ/2, y=r*SZ+SZ/2;
+  if(spec==='bomb'){ const e=document.createElement('div'); e.className='fx shock'; const d=Math.round(SZ*2.2); e.style.width=e.style.height=d+'px'; e.style.left=(x-d/2)+'px'; e.style.top=(y-d/2)+'px'; boardEl.appendChild(e); setTimeout(()=>e.remove(),440); buzz(25); }
+  else if(spec==='h'){ const e=document.createElement('div'); e.className='fx beam'; e.style.left='0'; e.style.width=(SZ*N)+'px'; e.style.height=Math.round(SZ*0.55)+'px'; e.style.top=(y-SZ*0.275)+'px'; boardEl.appendChild(e); setTimeout(()=>e.remove(),360); buzz(20); }
+  else if(spec==='v'){ const e=document.createElement('div'); e.className='fx beam'; e.style.top='0'; e.style.height=(SZ*N)+'px'; e.style.width=Math.round(SZ*0.55)+'px'; e.style.left=(x-SZ*0.275)+'px'; boardEl.appendChild(e); setTimeout(()=>e.remove(),360); buzz(20); }
+  else if(spec==='rainbow'){ flash(); buzz([20,30,40]); }
+}
 async function clearAndScore(set,chain){
   let cleared=0;
   set.forEach(k=>{ const [r,c]=k.split(',').map(Number); const t=grid[r][c]; if(!t)return;
     if(L.obj.type==='color'&&t.color===L.obj.color)colorCleared++;
-    cleared++; t.el.classList.add('clear'); const el=t.el; setTimeout(()=>el.remove(),260*A()); grid[r][c]=null; });
+    cleared++; if(cleared<=26)burstAt(r,c,t.spec?'#fff':COL[t.color]); t.el.classList.add('clear'); const el=t.el; setTimeout(()=>el.remove(),260*A()); grid[r][c]=null; });
   score+=Math.round(cleared*30*Math.max(1,chain));
   if(cleared>0){ const p=document.createElement('div'); p.className='pop'; p.textContent='+'+Math.round(cleared*30*Math.max(1,chain)); p.style.left=(SZ*N/2-20)+'px'; p.style.top=(SZ*N/2)+'px'; boardEl.appendChild(p); setTimeout(()=>p.remove(),700); }
   return cleared;
@@ -430,11 +452,11 @@ async function resolveCascade(){
     const toClear=new Set(); const q=[];
     const addCell=(r,c)=>{ if(r<0||c<0||r>=N||c>=N)return; const k=r+','+c; if(toClear.has(k))return; toClear.add(k); const t=grid[r][c]; if(t&&t.spec)q.push({r,c,spec:t.spec,color:t.color}); };
     for(let r=0;r<N;r++)for(let c=0;c<N;c++)if(matched[r][c])addCell(r,c);
-    while(q.length){ const s=q.shift(); if(s.spec==='h'){ for(let c=0;c<N;c++)addCell(s.r,c); } else if(s.spec==='v'){ for(let r=0;r<N;r++)addCell(r,s.c); } else if(s.spec==='bomb'){ for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++)addCell(s.r+dr,s.c+dc); } else if(s.spec==='rainbow'){ for(let r=0;r<N;r++)for(let c=0;c<N;c++){ const t=grid[r][c]; if(t&&t.color===s.color)addCell(r,c); } } }
+    while(q.length){ const s=q.shift(); fxAt(s.r,s.c,s.spec); if(s.spec==='h'){ for(let c=0;c<N;c++)addCell(s.r,c); } else if(s.spec==='v'){ for(let r=0;r<N;r++)addCell(r,s.c); } else if(s.spec==='bomb'){ for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++)addCell(s.r+dr,s.c+dc); } else if(s.spec==='rainbow'){ for(let r=0;r<N;r++)for(let c=0;c<N;c++){ const t=grid[r][c]; if(t&&t.color===s.color)addCell(r,c); } } }
     if(creates.length){ SFX.special(); creates.forEach(cr=>toClear.delete(cr.r+','+cr.c)); if(chain>=2)SFX.combo(); }
     await clearAndScore(toClear,chain);
     // place created specials
-    creates.forEach(cr=>{ if(grid[cr.r][cr.c]){ grid[cr.r][cr.c].el.remove(); } const t=mkTile(cr.color,cr.spec); place(t,cr.r,cr.c); });
+    creates.forEach(cr=>{ if(grid[cr.r][cr.c]){ grid[cr.r][cr.c].el.remove(); } const t=mkTile(cr.color,cr.spec); place(t,cr.r,cr.c); t.el.classList.add('born'); setTimeout(()=>t.el.classList.remove('born'),320); });
     updateHUD();
     await sleep(200*A());
     collapse();

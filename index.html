@@ -47,7 +47,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font
 #starRow{display:flex;gap:6px;justify-content:center;margin-top:6px;font-size:1rem;opacity:.5}
 #boardWrap{flex:1;display:flex;align-items:center;justify-content:center;width:100%;min-height:0}
 #board{position:relative;border-radius:12px;background:rgba(255,255,255,.03);box-shadow:inset 0 0 0 1px var(--line)}
-.tile{position:absolute;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:900;cursor:pointer;transition:transform .18s ease,opacity .18s;will-change:transform;box-shadow:inset 0 -4px 0 rgba(0,0,0,.25),inset 0 3px 0 rgba(255,255,255,.25)}
+.tile{position:absolute;border-radius:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .18s ease,opacity .18s;will-change:transform}
 .tile.sel{outline:3px solid #fff;outline-offset:-3px;z-index:5;animation:selp .6s ease-in-out infinite}
 @keyframes selp{0%,100%{transform:var(--tf) scale(1)}50%{transform:var(--tf) scale(.9)}}
 .tile.clear{animation:clr .28s ease forwards;z-index:4}
@@ -213,6 +213,7 @@ const LB_TABLE='leaderboard_match3';
 /* ============ DATA ============ */
 const COL=['#ff4d5e','#4d8bff','#38d96a','#ffd23f','#b06bff','#ff9f3f'];
 const SYM=['♥','◆','●','★','▲','⬢'];
+const EMO=['🍒','🫐','🍏','🍋','🍇','🍊'];
 const COLNAME=['Red','Blue','Green','Yellow','Purple','Orange'];
 const N=8;
 function levelDef(n){
@@ -223,7 +224,7 @@ function levelDef(n){
   if(n>30){ const k=n-20; obj={type:'score',target:30000+k*12000}; moves=18; s1=obj.target; }
   return {n,moves,obj,stars:[s1,Math.floor(s1*1.6),Math.floor(s1*2.4)]};
 }
-function objText(L){ return L.obj.type==='score' ? `Score <b>${L.obj.target.toLocaleString()}</b>` : `Clear <b>${L.obj.target}</b> <b style="color:${COL[L.obj.color]}">${COLNAME[L.obj.color]}</b> tiles`; }
+function objText(L){ return L.obj.type==='score' ? `Score <b>${L.obj.target.toLocaleString()}</b>` : `Clear <b>${L.obj.target}</b> <b style="font-size:1.25em;vertical-align:-2px">${EMO[L.obj.color]}</b>`; }
 
 /* ============ STORAGE ============ */
 const LS='m3_';
@@ -307,10 +308,11 @@ let SZ=40, grid=[], busy=false;
 function layoutBoard(){ const bw=Math.min(window.innerWidth-20,Math.min(window.innerHeight*0.52,400)); SZ=Math.floor(bw/N); boardEl.style.width=(SZ*N)+'px'; boardEl.style.height=(SZ*N)+'px'; }
 function specBadge(spec){ return spec==='h'?'↔':spec==='v'?'↕':spec==='bomb'?'💣':spec==='rainbow'?'🌈':''; }
 function styleTile(t){ const s=SZ-4; t.el.style.width=s+'px'; t.el.style.height=s+'px';
-  if(t.spec==='rainbow'){ t.el.style.background='conic-gradient(#ff4d5e,#ffd23f,#38d96a,#4d8bff,#b06bff,#ff4d5e)'; t.el.classList.add('spec'); }
-  else { t.el.style.background=COL[t.color]; t.el.classList.toggle('spec',!!t.spec); }
-  const b=specBadge(t.spec); const ss=Math.round(SZ*0.5);
-  t.el.innerHTML = b?`<span class="badge" style="font-size:${Math.round(SZ*0.6)}px">${b}</span>`:`<span style="color:#fff;font-weight:900;font-size:${ss}px;line-height:1;text-shadow:0 2px 3px rgba(0,0,0,.55),0 0 1px rgba(0,0,0,.8)">${SYM[t.color]}</span>`;
+  if(t.spec==='rainbow'){ t.el.style.background='radial-gradient(circle at 50% 38%, rgba(255,255,255,.28), rgba(255,255,255,.04))'; t.el.classList.add('spec'); t.el.innerHTML=`<span class="badge" style="font-size:${Math.round(SZ*0.6)}px">🌈</span>`; return; }
+  if(t.spec){ t.el.style.background=`radial-gradient(circle at 50% 38%, ${COL[t.color]}, rgba(0,0,0,.25))`; t.el.classList.add('spec'); t.el.innerHTML=`<span class="badge" style="font-size:${Math.round(SZ*0.58)}px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.6))">${specBadge(t.spec)}</span>`; return; }
+  t.el.classList.remove('spec');
+  t.el.style.background='radial-gradient(circle at 50% 32%, rgba(255,255,255,.08), rgba(255,255,255,.015))';
+  t.el.innerHTML=`<span style="font-size:${Math.round(SZ*0.74)}px;line-height:1;filter:drop-shadow(0 2px 2px rgba(0,0,0,.4))">${EMO[t.color]}</span>`;
 }
 function mkTile(color,spec){ const el=document.createElement('div'); el.className='tile'; const t={color,spec:spec||0,el}; styleTile(t); boardEl.appendChild(el); return t; }
 function posTile(t){ t.el.style.setProperty('--tf',`translate(${t.c*SZ+2}px, ${t.r*SZ+2}px)`); t.el.style.transform=`translate(${t.c*SZ+2}px, ${t.r*SZ+2}px)`; }

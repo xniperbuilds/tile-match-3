@@ -195,10 +195,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font
 
   <div id="footer"><div class="brand"><span class="x">X</span><span class="n">NIPERBUILDS</span></div>
     <div class="socials">
-      <a href="https://tiktok.com/@xniperbuilds" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M16.5 3c.3 2.1 1.6 3.6 3.5 3.9V9c-1.3 0-2.5-.4-3.5-1.1v6.6c0 3.4-2.7 6-6 6-3.2 0-5.8-2.6-5.8-5.8 0-3.2 2.6-5.8 5.8-5.8.3 0 .6 0 .9.1v3c-.3-.1-.6-.2-.9-.2-1.5 0-2.7 1.2-2.7 2.8 0 1.6 1.2 2.8 2.7 2.8 1.6 0 2.9-1.2 2.9-3.2V3h3.1z"/></svg></a>
       <a href="https://instagram.com/xniperbuilds" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.5-.1 4.8c-.1 3.2-1.6 4.8-4.9 4.9-1.3.1-1.6.1-4.9.1s-3.6 0-4.9-.1c-3.3-.1-4.8-1.7-4.9-4.9C2.1 15.5 2.1 15.2 2.1 12s0-3.5.1-4.8C2.3 4 3.8 2.4 7.1 2.3 8.4 2.2 8.8 2.2 12 2.2zm0 3.2A6.6 6.6 0 1 0 18.6 12 6.6 6.6 0 0 0 12 5.4zm0 10.9A4.3 4.3 0 1 1 16.3 12 4.3 4.3 0 0 1 12 16.3zm6.8-11.1a1.5 1.5 0 1 0 1.5 1.5 1.5 1.5 0 0 0-1.5-1.5z"/></svg></a>
-      <a href="https://youtube.com/@xniperbuilds" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24"><path d="M23 7.5a3 3 0 0 0-2.1-2.1C19 4.9 12 4.9 12 4.9s-7 0-8.9.5A3 3 0 0 0 1 7.5 31 31 0 0 0 .5 12 31 31 0 0 0 1 16.5a3 3 0 0 0 2.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .5-4.5 31 31 0 0 0-.5-4.5zM9.8 15.3V8.7l5.7 3.3z"/></svg></a>
-      <a href="https://github.com/xniperbuilds" target="_blank" rel="noopener" aria-label="GitHub"><svg viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12c0 4.4 2.9 8.2 6.8 9.5.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.3-3.4-1.3-.4-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.6-1.4-2.2-.3-4.6-1.1-4.6-4.9 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.4 9.4 0 0 1 5 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.8-2.4 4.6-4.6 4.9.4.3.7.9.7 1.9v2.8c0 .3.2.6.7.5A10 10 0 0 0 22 12 10 10 0 0 0 12 2z"/></svg></a>
     </div></div>
 </div>
 
@@ -543,7 +540,7 @@ function renderLB(){
 const esc=s=>String(s).replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
 
 /* ============ SHARE ============ */
-const PLAY_URL='https://xniperbuilds.github.io/tile-match-3/';
+const PLAY_URL='https://xnipertools.com/games/?play=tile-match-3';
 async function shareCard(){
   if(!lastWin)return; SFX.click(); const w=lastWin;
   const wrap=document.createElement('div'); wrap.style.cssText='position:fixed;left:-9999px;top:0;width:540px;height:960px;';
@@ -555,7 +552,7 @@ async function shareCard(){
       <div style="font-size:104px;font-weight:900;line-height:.95;color:#3ff0e0;text-shadow:0 0 40px rgba(63,240,224,.7)">${w.score.toLocaleString()}</div>
       <div style="margin-top:46px;font-size:24px;font-weight:800;color:#3ff0e0">${esc(userStr())}</div>
       <div style="margin-top:14px;font-size:21px;color:rgba(255,255,255,.65);font-weight:700">"Match. Combo. Conquer."</div>
-      <div style="position:absolute;left:0;right:0;bottom:46px;text-align:center"><div style="font-family:Russo One;font-size:26px;letter-spacing:2px"><span style="color:#ff3346">X</span>NIPERBUILDS</div><div style="font-size:18px;color:rgba(255,255,255,.5);margin-top:8px">xniperbuilds.github.io/tile-match-3</div></div>
+      <div style="position:absolute;left:0;right:0;bottom:46px;text-align:center"><div style="font-family:Russo One;font-size:26px;letter-spacing:2px"><span style="color:#ff3346">X</span>NIPERBUILDS</div><div style="font-size:18px;color:rgba(255,255,255,.5);margin-top:8px">xnipertools.com/games</div></div>
     </div></div>`;
   document.body.appendChild(wrap); const btn=$('winShare'); const old=btn.textContent; btn.textContent='…';
   try{ if(!window.html2canvas){ await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); }
